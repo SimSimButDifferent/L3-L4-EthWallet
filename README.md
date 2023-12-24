@@ -80,7 +80,7 @@ Write a contract that includes a custom modifier. Use this modifier to restrict 
 ##### Token Wallet with Withdrawal Limits
 Use Case Overview: Implement a smart contract that acts as a wallet for a specific token. This contract would allow users to deposit, withdraw, and check their token balance, with daily withdrawal limits for security.
 
-Functions:
+#### Functions:
 
 depositTokens: A public function to deposit tokens into the wallet.
 withdrawTokens: An external function to withdraw a specified amount of tokens, adhering to daily limits.
