@@ -1,24 +1,24 @@
-Lesson 3: Functions and Modifiers in Solidity
-Objective:
+## Lesson 3: Functions and Modifiers in Solidity
+### Objective:
 To understand how to write and use functions in Solidity, and to learn about function modifiers for enforcing certain conditions and managing access control in smart contracts.
 
-Part 1: Functions in Solidity
-Function Declaration and Types:
+### Part 1: Functions in Solidity
+##### Function Declaration and Types:
 
 Understand the syntax for declaring functions.
 Different types of functions: public, private, internal, and external.
-Return Values and Visibility:
+##### Return Values and Visibility:
 
 How to define return values for functions.
 Understand the implications of function visibility.
-Function Modifiers:
+##### Function Modifiers:
 
 Usage of view, pure, and state-changing functions.
-Function Parameters:
+##### Function Parameters:
 
 Passing parameters to functions.
 Using memory and storage keywords for complex data types.
-Example: Creating a Function
+##### Example: Creating a Function
 
 solidity
 Copy code
@@ -35,8 +35,8 @@ contract MyContract {
         return count;
     }
 }
-Part 2: Modifiers in Solidity
-Understanding Modifiers:
+### Part 2: Modifiers in Solidity
+##### Understanding Modifiers:
 
 Purpose of modifiers in Solidity.
 Writing custom modifiers to enforce conditions.
@@ -66,18 +66,18 @@ contract MyContract {
         owner = newOwner;
     }
 }
-Assignments and Practical Exercises
-Assignment 1:
+### Assignments and Practical Exercises
+##### Assignment 1:
 
 Research and write a brief explanation of how and why view and pure modifiers are used in Solidity functions.
-Exercise 1:
+##### Exercise 1:
 
 Create a smart contract with a few functions demonstrating different visibility levels (public, private, internal, external) and return values.
-Exercise 2:
+##### Exercise 2:
 
 Write a contract that includes a custom modifier. Use this modifier to restrict access to one of the contract's functions.
 
-Token Wallet with Withdrawal Limits
+##### Token Wallet with Withdrawal Limits
 Use Case Overview: Implement a smart contract that acts as a wallet for a specific token. This contract would allow users to deposit, withdraw, and check their token balance, with daily withdrawal limits for security.
 
 Functions:
