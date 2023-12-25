@@ -2,12 +2,17 @@
 
 pragma solidity ^0.8.0;
 
+/* errors */
+error EthWallet__DepositMustBeAboveZero();
+error EthWallet__WithdrawalMustBeAboveZero();
+error EthWallet__WalletIsEmpty();
+error EthWallet__WithdrawalExceedsUserBalance();
+
 contract EthWallet {
     /* structs */
     struct User {
         address ownerAddress;
         uint userBalance;
-        bool walletStatus;
         uint withdrawnToday;
         uint lastWithdrawalTime;
     }
@@ -16,10 +21,9 @@ contract EthWallet {
     mapping(address => User) private users;
 
     /* state variables */
-    uint currentBalance;
     uint userCount;
-    uint withdrawalAmount;
     uint public constant dailyWithdrawalLimit = 10 ether;
+    bool private locked;
 
     modifier withdrawalLimitCheck(uint _withdrawalAmount) {
         User storage currentUser = users[msg.sender];
@@ -43,8 +47,8 @@ contract EthWallet {
     }
 
     modifier sufficientBalance(uint _withdrawalAmount) {
-        withdrawalAmount = _withdrawalAmount;
-        currentBalance = users[msg.sender].userBalance;
+        uint withdrawalAmount = _withdrawalAmount;
+        uint currentBalance = users[msg.sender].userBalance;
         require(
             withdrawalAmount <= currentBalance,
             "Amount requested exceeds wallet balance"
@@ -52,22 +56,31 @@ contract EthWallet {
         _;
     }
 
+    modifier noReeentrant() {
+        require(!locked, "No re_entrancy");
+        locked = true;
+        _;
+        locked = false;
+    }
+
     // Helper function to determine if a new day has started
-    function isNewDay(uint lastWithdrawalTime) private view returns (bool) {
-        return (block.timestamp / 1 days) > (lastWithdrawalTime / 1 days);
+    function isNewDay(uint lastWithdrawalTime) internal view returns (bool) {
+        uint currentDay = block.timestamp / 1 days;
+        uint lastWithdrawalDay = lastWithdrawalTime / 1 days;
+        return currentDay > lastWithdrawalDay;
     }
 
     function deposit() public payable {
         uint depositAmount = msg.value;
 
         if (depositAmount <= 0) {
-            revert("Deposit amount must be above 0");
+            revert EthWallet__DepositMustBeAboveZero();
         }
 
-        if (users[msg.sender].walletStatus == true) {
+        if (users[msg.sender].userBalance > 0) {
             users[msg.sender].userBalance += depositAmount;
         } else {
-            users[msg.sender] = User(msg.sender, depositAmount, true, 0, 0);
+            users[msg.sender] = User(msg.sender, depositAmount, 0, 0);
         }
     }
 
@@ -75,31 +88,32 @@ contract EthWallet {
         uint _withdrawalAmount
     )
         external
+        noReeentrant
         withdrawalLimitCheck(_withdrawalAmount)
         sufficientBalance(_withdrawalAmount)
     {
+        if (_withdrawalAmount <= 0) {
+            revert EthWallet__WithdrawalMustBeAboveZero();
+        }
+
         require(
             _withdrawalAmount <= address(this).balance,
             "Insufficient contract balance"
         );
 
-        if (_withdrawalAmount <= 0) {
-            revert("Withdrawal amount must be above 0");
-        }
-
-        if (users[msg.sender].walletStatus != true) {
-            revert("Wallet does not exist");
+        if (users[msg.sender].userBalance == 0) {
+            revert EthWallet__WalletIsEmpty();
         }
 
         if (_withdrawalAmount > users[msg.sender].userBalance) {
-            revert("Withdrawal exceeds user balance");
+            revert EthWallet__WithdrawalExceedsUserBalance();
         }
-
-        // Process withdrawal
-        payable(msg.sender).transfer(_withdrawalAmount);
 
         // Update user Balance
         users[msg.sender].userBalance -= _withdrawalAmount;
+
+        // Process withdrawal
+        payable(msg.sender).transfer(_withdrawalAmount);
     }
 
     function getUserBalance() public view returns (uint) {
