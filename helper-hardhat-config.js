@@ -1,4 +1,5 @@
 const hre = require("hardhat");
+const { ethers } = require("hardhat");
 
 const networkConfig = {
   31377: {
