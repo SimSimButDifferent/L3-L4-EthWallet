@@ -11,7 +11,6 @@
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
     "chai": "^4.3.10",
-    "ethers": "^6.9.0",
     "hardhat-deploy": "^0.11.44",
     "hardhat-gas-reporter": "^1.0.9",
     "solidity-coverage": "^0.8.5"
@@ -22,6 +21,7 @@
   },
   "dependencies": {
     "dotenv": "^16.3.1",
+    "ethers": "^6.9.1",
     "hardhat": "^2.19.3",
     "prettier": "^3.1.1"
   }

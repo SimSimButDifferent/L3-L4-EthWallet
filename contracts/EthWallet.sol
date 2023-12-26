@@ -21,7 +21,6 @@ contract EthWallet {
     mapping(address => User) private users;
 
     /* state variables */
-    uint userCount;
     uint public constant dailyWithdrawalLimit = 10 ether;
     bool private locked;
 

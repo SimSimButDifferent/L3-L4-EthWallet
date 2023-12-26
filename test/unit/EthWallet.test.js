@@ -6,21 +6,19 @@ const { developmentChains } = require("../../helper-hardhat-config")
     ? describe.skip
     : describe("EthWallet", async function () {
           let ethWallet
-          // let userBalance
+          let userBalance
+          let initialContractBalance
           // let withdrawnToday
           // let lastWithdrawalTime
-          // let depositAmount
+          let depositAmount
           // let withdrawalAmount
-          // let userCount
-          // const dailyWithdrawalLimit = hre.ethers.utils.formatEther(10)
+          // const dailyWithdrawalLimit = hre.ethers.parseEther("10")
 
           beforeEach(async function () {
               ;[user1, user2] = await hre.ethers.getSigners()
               const EthWallet = await hre.ethers.getContractFactory("EthWallet")
               ethWallet = await EthWallet.deploy()
               await ethWallet.waitForDeployment()
-
-              console.log("pancakes")
           })
 
           describe("deposit", async function () {
@@ -30,6 +28,29 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   ).to.be.revertedWithCustomError(
                       ethWallet,
                       "EthWallet__DepositMustBeAboveZero",
+                  )
+              })
+
+              it("Should allow a user to deposit ether", async function () {
+                  depositAmount = hre.ethers.parseEther("1") // 1 Ether
+                  const initialContractBalance =
+                      await hre.ethers.provider.getBalance(ethWallet.target)
+
+                  // Perform the deposit
+                  const depositTx = await ethWallet.deposit({
+                      value: depositAmount,
+                  })
+
+                  // Wait for the transaction to be mined
+                  await depositTx.wait()
+
+                  // Get the new contract balance
+                  const newContractBalance =
+                      await hre.ethers.provider.getBalance(ethWallet.target)
+
+                  // Check if the contract balance increased by the deposit amount
+                  expect(newContractBalance).to.equal(
+                      initialContractBalance + depositAmount,
                   )
               })
           })
