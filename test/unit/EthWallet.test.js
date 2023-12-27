@@ -31,7 +31,7 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   )
               })
 
-              it("Should allow a user to deposit ether", async function () {
+              it("Should allow a user to deposit ether to the contract", async function () {
                   depositAmount = hre.ethers.parseEther("1") // 1 Ether
                   const initialContractBalance =
                       await hre.ethers.provider.getBalance(ethWallet.target)
@@ -51,6 +51,45 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   // Check if the contract balance increased by the deposit amount
                   expect(newContractBalance).to.equal(
                       initialContractBalance + depositAmount,
+                  )
+              })
+
+              it("maps users addresses to their balance after deposit", async function () {
+                  depositAmount = hre.ethers.parseEther("1")
+
+                  const depositTx = await ethWallet.deposit({
+                      value: depositAmount,
+                  })
+
+                  await depositTx.wait()
+
+                  userBalance = await ethWallet.getUserBalance()
+
+                  expect(await ethWallet.getUserBalance()).to.equal(
+                      depositAmount,
+                  )
+              })
+
+              it("Allows multiple deposits by the same user", async function () {
+                  depositAmount = hre.ethers.parseEther("1")
+                  const depositAmount2 = hre.ethers.parseEther("3")
+
+                  const depositTx1 = await ethWallet.deposit({
+                      value: depositAmount,
+                  })
+
+                  await depositTx1.wait()
+
+                  const depositTx2 = await ethWallet.deposit({
+                      value: depositAmount2,
+                  })
+
+                  await depositTx2.wait()
+
+                  userBalance = await ethWallet.getUserBalance()
+
+                  expect(await ethWallet.getUserBalance()).to.equal(
+                      depositAmount + depositAmount2,
                   )
               })
           })
