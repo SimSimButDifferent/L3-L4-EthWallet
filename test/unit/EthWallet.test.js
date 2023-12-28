@@ -32,6 +32,7 @@ const { developmentChains } = require("../../helper-hardhat-config")
               })
 
               it("Should allow a user to deposit ether to the contract", async function () {
+                  // ASK WHY THIS TEST TAKES NO TIME AND DOES IT MATTER?
                   depositAmount = hre.ethers.parseEther("1") // 1 Ether
                   const initialContractBalance =
                       await hre.ethers.provider.getBalance(ethWallet.target)
@@ -56,7 +57,8 @@ const { developmentChains } = require("../../helper-hardhat-config")
 
               it("maps users addresses to their balance after deposit", async function () {
                   depositAmount = hre.ethers.parseEther("1")
-
+                  const user2DepositAmount = hre.ethers.parseEther("2")
+                  // user1 deposit and check balance
                   const depositTx = await ethWallet.deposit({
                       value: depositAmount,
                   })
@@ -68,6 +70,17 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   expect(await ethWallet.getUserBalance()).to.equal(
                       depositAmount,
                   )
+
+                  // user2 deposit and check balance
+                  const depositTxUser2 = await ethWallet
+                      .connect(user2)
+                      .deposit({ value: user2DepositAmount })
+
+                  await depositTxUser2.wait()
+
+                  expect(
+                      await ethWallet.connect(user2).getUserBalance(),
+                  ).to.equal(user2DepositAmount)
               })
 
               it("Allows multiple deposits by the same user", async function () {
