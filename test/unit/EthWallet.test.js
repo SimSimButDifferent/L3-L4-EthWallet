@@ -162,35 +162,58 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   )
               })
 
-              //   it("Allows users to withdraw from contract", async function () {
-              //       const user1InitialEtherBalance =
-              //           await hre.ethers.provider.getBalance(user1.address)
-              //       const user1DepositAmount = hre.ethers.parseEther("5")
-              //       withdrawalAmount = hre.ethers.parseEther("2")
+              it("Does not allow withdrawals over the daily limit", async function () {
+                  const deposit2 = hre.ethers.parseEther("11")
+                  const overDailyWaithdraw = hre.ethers.parseEther("11")
 
-              //       console.log(user1InitialEtherBalance)
+                  const depositTx = await ethWallet.deposit({
+                      value: deposit2,
+                  })
+                  const depositTxReciept = await depositTx.wait()
 
-              //       // User1 2nd deposit (6 ETH total)
-              //       user1DepositTx2 = await ethWallet.deposit({
-              //           value: user1DepositAmount,
-              //       })
-              //       user1depositTx2Reciept = await user1DepositTx2.wait()
+                  await expect(
+                      ethWallet.withdraw(overDailyWaithdraw),
+                  ).to.be.revertedWith("Daily withdrawal limit exceeded")
+              })
 
-              //       console.log(depositTxGasCost)
+              it("Allows users to withdraw from contract and updates user balance and sends ETH", async function () {
+                  const walletInitialEtherBalance =
+                      await hre.ethers.provider.getBalance(user1.address)
+                  const initialUserBalance = await ethWallet.getUserBalance()
 
-              //       const gasUsed = user1depositTx2Reciept.gasUsed
+                  const depositAmount2 = hre.ethers.parseEther("5")
+                  withdrawalAmount = hre.ethers.parseEther("2")
 
-              //       const gasPrice = user1depositTx2Reciept.gasPrice
+                  // User1 2nd deposit (6 ETH total)
+                  const depositTx = await ethWallet.deposit({
+                      value: depositAmount2,
+                  })
+                  const depositTxReciept = await depositTx.wait()
+                  // Get gas cost for deposit tx
+                  const gasCostUser1Deposit =
+                      depositTxReciept.gasUsed * depositTxReciept.gasPrice
 
-              //       const gasCost = gasUsed * gasPrice
+                  // User1 withdraw
+                  const withdrawTx = await ethWallet.withdraw(withdrawalAmount)
 
-              //       console.log(gasCost)
+                  const withdrawalReciept = await withdrawTx.wait()
+                  // Get gas cost for withdrawal tx
+                  const gasCostUser1Withdraw =
+                      withdrawalReciept.gasUsed * withdrawalReciept.gasPrice
 
-              //       // User1 withdraw
-              //       const user1WithdrawTx =
-              //           await ethWallet.withdraw(withdrawalAmount)
+                  const afterUserBalance = await ethWallet.getUserBalance()
+                  const afterEtherBalance =
+                      await hre.ethers.provider.getBalance(user1.address)
 
-              //       await user1WithdrawTx.wait()
-              //   })
+                  await expect(afterUserBalance).to.equal(
+                      initialUserBalance + depositAmount2 - withdrawalAmount,
+                  )
+
+                  await expect(afterEtherBalance).to.equal(
+                      walletInitialEtherBalance -
+                          (depositAmount2 + gasCostUser1Deposit) +
+                          (withdrawalAmount - gasCostUser1Withdraw),
+                  )
+              })
           })
       })
