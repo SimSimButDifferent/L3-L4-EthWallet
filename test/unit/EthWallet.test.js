@@ -11,7 +11,7 @@ const { developmentChains } = require("../../helper-hardhat-config")
           // let withdrawnToday
           // let lastWithdrawalTime
           let depositAmount
-          // let withdrawalAmount
+          let withdrawalAmount
           // const dailyWithdrawalLimit = hre.ethers.parseEther("10")
 
           beforeEach(async function () {
@@ -55,7 +55,7 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   )
               })
 
-              it("maps users addresses to their balance after deposit", async function () {
+              it("maps users addresses to their balances after deposit", async function () {
                   depositAmount = hre.ethers.parseEther("1")
                   const user2DepositAmount = hre.ethers.parseEther("2")
                   // user1 deposit and check balance
@@ -105,5 +105,92 @@ const { developmentChains } = require("../../helper-hardhat-config")
                       depositAmount + depositAmount2,
                   )
               })
+          })
+
+          describe("withdraw", async function () {
+              beforeEach(async function () {
+                  depositAmount = hre.ethers.parseEther("1")
+                  const depositTx = await ethWallet.deposit({
+                      value: depositAmount,
+                  })
+                  await depositTx.wait()
+              })
+
+              it("Withdrawal amount must be above zero", async function () {
+                  await expect(
+                      ethWallet.withdraw(0),
+                  ).to.be.revertedWithCustomError(
+                      ethWallet,
+                      "EthWallet__WithdrawalMustBeAboveZero",
+                  )
+              })
+
+              it("Does not allow withdrawals above the amount held in the contract", async function () {
+                  const overdrawAmount = hre.ethers.parseEther("2")
+
+                  await expect(
+                      ethWallet.withdraw(overdrawAmount),
+                  ).to.be.revertedWithCustomError(
+                      ethWallet,
+                      "EthWallet_InsufficientContractBalance()",
+                  )
+              })
+
+              it("Does not allow withdrawals if users balance is empty", async function () {
+                  await expect(
+                      ethWallet.connect(user2).withdraw(depositAmount),
+                  ).to.be.revertedWithCustomError(
+                      ethWallet,
+                      "EthWallet__WalletIsEmpty()",
+                  )
+              })
+
+              it("Does not allow withdrawals if user balance is below amount requested", async function () {
+                  const user2DepositAmount = hre.ethers.parseEther("2")
+                  withdrawalAmount = hre.ethers.parseEther("2")
+                  const user2Tx = await ethWallet
+                      .connect(user2)
+                      .deposit({ value: user2DepositAmount })
+
+                  await user2Tx.wait()
+
+                  await expect(
+                      ethWallet.connect(user1).withdraw(withdrawalAmount),
+                  ).to.be.revertedWithCustomError(
+                      ethWallet,
+                      "EthWallet__WithdrawalExceedsUserBalance()",
+                  )
+              })
+
+              //   it("Allows users to withdraw from contract", async function () {
+              //       const user1InitialEtherBalance =
+              //           await hre.ethers.provider.getBalance(user1.address)
+              //       const user1DepositAmount = hre.ethers.parseEther("5")
+              //       withdrawalAmount = hre.ethers.parseEther("2")
+
+              //       console.log(user1InitialEtherBalance)
+
+              //       // User1 2nd deposit (6 ETH total)
+              //       user1DepositTx2 = await ethWallet.deposit({
+              //           value: user1DepositAmount,
+              //       })
+              //       user1depositTx2Reciept = await user1DepositTx2.wait()
+
+              //       console.log(depositTxGasCost)
+
+              //       const gasUsed = user1depositTx2Reciept.gasUsed
+
+              //       const gasPrice = user1depositTx2Reciept.gasPrice
+
+              //       const gasCost = gasUsed * gasPrice
+
+              //       console.log(gasCost)
+
+              //       // User1 withdraw
+              //       const user1WithdrawTx =
+              //           await ethWallet.withdraw(withdrawalAmount)
+
+              //       await user1WithdrawTx.wait()
+              //   })
           })
       })

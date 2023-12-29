@@ -7,6 +7,7 @@ error EthWallet__DepositMustBeAboveZero();
 error EthWallet__WithdrawalMustBeAboveZero();
 error EthWallet__WalletIsEmpty();
 error EthWallet__WithdrawalExceedsUserBalance();
+error EthWallet_InsufficientContractBalance();
 
 contract EthWallet {
     /* structs */
@@ -23,6 +24,7 @@ contract EthWallet {
     /* state variables */
     uint public constant dailyWithdrawalLimit = 10 ether;
     bool private locked;
+    uint currentBalance;
 
     modifier withdrawalLimitCheck(uint _withdrawalAmount) {
         User storage currentUser = users[msg.sender];
@@ -47,11 +49,14 @@ contract EthWallet {
 
     modifier sufficientBalance(uint _withdrawalAmount) {
         uint withdrawalAmount = _withdrawalAmount;
-        uint currentBalance = users[msg.sender].userBalance;
-        require(
-            withdrawalAmount <= currentBalance,
-            "Amount requested exceeds wallet balance"
-        );
+        currentBalance = users[msg.sender].userBalance;
+        if (currentBalance == 0) {
+            revert EthWallet__WalletIsEmpty();
+        } else if (_withdrawalAmount > address(this).balance) {
+            revert EthWallet_InsufficientContractBalance();
+        } else if (_withdrawalAmount > currentBalance) {
+            revert EthWallet__WithdrawalExceedsUserBalance();
+        }
         _;
     }
 
@@ -93,19 +98,6 @@ contract EthWallet {
     {
         if (_withdrawalAmount <= 0) {
             revert EthWallet__WithdrawalMustBeAboveZero();
-        }
-
-        require(
-            _withdrawalAmount <= address(this).balance,
-            "Insufficient contract balance"
-        );
-
-        if (users[msg.sender].userBalance == 0) {
-            revert EthWallet__WalletIsEmpty();
-        }
-
-        if (_withdrawalAmount > users[msg.sender].userBalance) {
-            revert EthWallet__WithdrawalExceedsUserBalance();
         }
 
         // Update user Balance
