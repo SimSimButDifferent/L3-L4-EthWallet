@@ -118,7 +118,7 @@ const { developmentChains } = require("../../helper-hardhat-config")
 
               it("Withdrawal amount must be above zero", async function () {
                   await expect(
-                      ethWallet.withdraw(0),
+                      ethWallet.withdraw(hre.ethers.parseEther("0")),
                   ).to.be.revertedWithCustomError(
                       ethWallet,
                       "EthWallet__WithdrawalMustBeAboveZero",
@@ -214,6 +214,45 @@ const { developmentChains } = require("../../helper-hardhat-config")
                           (depositAmount2 + gasCostUser1Deposit) +
                           (withdrawalAmount - gasCostUser1Withdraw),
                   )
+              })
+
+              // not working yet
+              it("Should prevent reentrancy attack", async function () {
+                  const Attack = await ethers.getContractFactory("Attack")
+
+                  attackContract = await Attack.deploy(ethWallet.target)
+                  await attackContract.waitForDeployment()
+
+                  const depositAmount2 = hre.ethers.parseEther("9")
+
+                  await ethWallet.deposit({ value: depositAmount2 })
+
+                  await ethWallet
+                      .connect(user2)
+                      .deposit({ value: depositAmount2 })
+
+                  const balanceBeforeAttack =
+                      await hre.ethers.provider.getBalance(ethWallet.target)
+
+                  // Fund attack account
+                  const sendTx = await user1.sendTransaction({
+                      to: attackContract,
+                      value: hre.ethers.parseEther("2"),
+                  })
+
+                  await sendTx.wait()
+
+                  // Attempt the attack
+                  const attackTx = await attackContract.attack({
+                      value: hre.ethers.parseEther("2"),
+                  })
+
+                  expect(attackTx).to.be.revertedWith("No re_entrancy")
+                  const balanceAfterAttack = await ethers.provider.getBalance(
+                      ethWallet.target,
+                  )
+
+                  expect(balanceAfterAttack).to.equal(balanceBeforeAttack)
               })
           })
       })

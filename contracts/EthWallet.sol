@@ -92,9 +92,9 @@ contract EthWallet {
         uint _withdrawalAmount
     )
         external
-        noReeentrant
         withdrawalLimitCheck(_withdrawalAmount)
         sufficientBalance(_withdrawalAmount)
+        noReeentrant
     {
         if (_withdrawalAmount <= 0) {
             revert EthWallet__WithdrawalMustBeAboveZero();
