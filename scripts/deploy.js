@@ -23,14 +23,15 @@ async function main() {
         const ethWallet = await EthWallet.deploy()
         console.log(`EthWallet deployed to: ${ethWallet.target}`)
 
-        const desiredConfirmations = 2
-        const receipt =
-            await EthWallet.deploymentTransaction().wait(desiredConfirmations)
+        const desiredConfirmations = 6
+        const receipt = await ethWallet
+            .deploymentTransaction()
+            .wait(desiredConfirmations)
 
         console.log(
             `Transaction confirmed. Block number: ${receipt.blockNumber}`,
         )
-        await hre.run("verify:etherscan", { address: EthWallet.target })
+        await hre.run("verify:etherscan", { address: ethWallet.target })
         console.log("EthWallet verified!")
         console.log("--------------------------------------------------")
     }
