@@ -108,6 +108,10 @@ contract EthWallet {
     }
 
     function getUserBalance() public view returns (uint) {
-        return users[msg.sender].userBalance;
+        if (users[msg.sender].ownerAddress != address(0)) {
+            return users[msg.sender].userBalance;
+        } else {
+            return 0;
+        }
     }
 }
