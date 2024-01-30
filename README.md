@@ -1,3 +1,21 @@
+## Directions for use
+
+To play around with this code locally run the following commands in your local terminal in order:
+
+```
+git clone https://github.com/SimSimButDifferent/L3-EthWallet.git
+yarn
+```
+Then split the terminal and run the below code in the other half:
+```
+yarn hardhat node
+```
+
+Finally, deploy to the hardhat node using:
+```
+yarn hardhat run scripts/deploy.js --network localhost
+```
+
 ## Lesson 3: Functions and Modifiers in Solidity
 ### Objective:
 To understand how to write and use functions in Solidity, and to learn about function modifiers for enforcing certain conditions and managing access control in smart contracts.
