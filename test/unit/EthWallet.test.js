@@ -55,7 +55,7 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   )
               })
 
-              it("maps users addresses to their balances after deposit", async function () {
+              it("maps users addresses to their balances after deposit and returns correct balance", async function () {
                   depositAmount = hre.ethers.parseEther("1")
                   const user2DepositAmount = hre.ethers.parseEther("2")
                   // user1 deposit and check balance
