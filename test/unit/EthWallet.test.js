@@ -7,12 +7,8 @@ const { developmentChains } = require("../../helper-hardhat-config")
     : describe("EthWallet", async function () {
           let ethWallet
           let userBalance
-          let initialContractBalance
-          // let withdrawnToday
-          // let lastWithdrawalTime
           let depositAmount
           let withdrawalAmount
-          // const dailyWithdrawalLimit = hre.ethers.parseEther("10")
 
           beforeEach(async function () {
               ;[user1, user2] = await hre.ethers.getSigners()
@@ -32,7 +28,6 @@ const { developmentChains } = require("../../helper-hardhat-config")
               })
 
               it("Should allow a user to deposit ether to the contract", async function () {
-                  // ASK WHY THIS TEST TAKES NO TIME AND DOES IT MATTER?
                   depositAmount = hre.ethers.parseEther("1") // 1 Ether
                   const initialContractBalance =
                       await hre.ethers.provider.getBalance(ethWallet.target)
@@ -216,7 +211,6 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   )
               })
 
-              // not working yet
               it("Should prevent reentrancy attack", async function () {
                   const Attack = await ethers.getContractFactory("Attack")
 
