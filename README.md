@@ -1,5 +1,5 @@
 ## Note
-For lesson 4, switch to L4 branch 🌿 
+For lesson 4 Code, switch to L4 branch 🌿 
 
 ## Directions for use
 
