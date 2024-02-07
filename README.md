@@ -1,3 +1,6 @@
+## Note
+For lesson 4, switch to L4 branch 🌿 
+
 ## Directions for use
 
 To play around with this code locally run the following commands in your local terminal in order:
