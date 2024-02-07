@@ -75,11 +75,9 @@ contract EthWallet {
     }
 
     function deposit() public payable {
-        uint depositAmount = msg.value;
+        require(msg.value > 0);
 
-        if (depositAmount <= 0) {
-            revert EthWallet__DepositMustBeAboveZero();
-        }
+        uint depositAmount = msg.value;
 
         if (users[msg.sender].userBalance > 0) {
             users[msg.sender].userBalance += depositAmount;
