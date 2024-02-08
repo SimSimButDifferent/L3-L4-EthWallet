@@ -75,7 +75,7 @@ contract EthWallet {
     }
 
     function deposit() public payable {
-        require(msg.value > 0);
+        require(msg.value > 0, "Deposit must be above zero!");
 
         uint depositAmount = msg.value;
 

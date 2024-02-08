@@ -19,11 +19,8 @@ const { developmentChains } = require("../../helper-hardhat-config")
 
           describe("deposit", async function () {
               it("Deposit amount must be above zero", async function () {
-                  await expect(
-                      ethWallet.deposit(),
-                  ).to.be.revertedWithCustomError(
-                      ethWallet,
-                      "EthWallet__DepositMustBeAboveZero",
+                  await expect(ethWallet.deposit()).to.be.revertedWith(
+                      "Deposit must be above zero!",
                   )
               })
 
