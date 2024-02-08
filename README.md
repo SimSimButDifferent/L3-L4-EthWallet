@@ -1,5 +1,11 @@
 ## Note
-For lesson 3 Code, switch to main branch 🌿 
+For lesson 3 Code, switch to main branch 🌿
+
+Lesson 4 updates: 
+
+- added events to the deposit and withdraw functions.
+- updated tests for increased coverage.
+- added .solcover file to ignore Attack.sol
 
 ## Directions for use
 
