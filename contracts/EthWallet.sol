@@ -102,13 +102,15 @@ contract EthWallet {
     {
         require(_withdrawalAmount > 0, "Withdrawal must be above zero!");
 
+        uint withdrawalAmount = _withdrawalAmount;
+
         // Update user Balance
-        users[msg.sender].userBalance -= _withdrawalAmount;
+        users[msg.sender].userBalance -= withdrawalAmount;
 
         // Process withdrawal
-        payable(msg.sender).transfer(_withdrawalAmount);
+        payable(msg.sender).transfer(withdrawalAmount);
 
-        emit WithdrawSuccess(msg.sender, _withdrawalAmount);
+        emit WithdrawSuccess(msg.sender, withdrawalAmount);
     }
 
     function getUserBalance() public view returns (uint) {

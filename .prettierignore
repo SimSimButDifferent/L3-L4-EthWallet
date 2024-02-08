@@ -10,3 +10,4 @@ README.md
 coverage.json
 fund.js
 FundMe.staging.js
+.solcover

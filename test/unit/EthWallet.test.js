@@ -97,6 +97,19 @@ const { developmentChains } = require("../../helper-hardhat-config")
                       depositAmount + depositAmount2,
                   )
               })
+
+              it("Should emit an event after succesful deposit", async function () {
+                  depositAmount = hre.ethers.parseEther("1")
+
+                  const depositTx1 = await ethWallet.deposit({
+                      value: depositAmount,
+                  })
+
+                  await expect(depositTx1.wait()).to.emit(
+                      ethWallet,
+                      "DepositSuccess",
+                  )
+              })
           })
 
           describe("withdraw", async function () {
@@ -165,6 +178,17 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   ).to.be.revertedWith("Daily withdrawal limit exceeded")
               })
 
+              it("Emits an event after succesful withdrawal", async function () {
+                  withdrawalAmount = hre.ethers.parseEther("1")
+                  const withdrawTx = await ethWallet.withdraw(withdrawalAmount)
+
+                  // Emit event check
+                  expect(await withdrawTx.wait()).to.emit(
+                      ethWallet,
+                      "WithdrawSuccess",
+                  )
+              })
+
               it("Allows users to withdraw from contract and updates user balance and sends ETH", async function () {
                   const walletInitialEtherBalance =
                       await hre.ethers.provider.getBalance(user1.address)
@@ -185,6 +209,12 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   // User1 withdraw
                   const withdrawTx = await ethWallet.withdraw(withdrawalAmount)
 
+                  // Emit event check
+                  expect(await withdrawTx.wait()).to.emit(
+                      ethWallet,
+                      "WithdrawSuccess",
+                  )
+
                   const withdrawalReciept = await withdrawTx.wait()
                   // Get gas cost for withdrawal tx
                   const gasCostUser1Withdraw =
@@ -194,11 +224,11 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   const afterEtherBalance =
                       await hre.ethers.provider.getBalance(user1.address)
 
-                  await expect(afterUserBalance).to.equal(
+                  expect(afterUserBalance).to.equal(
                       initialUserBalance + depositAmount2 - withdrawalAmount,
                   )
 
-                  await expect(afterEtherBalance).to.equal(
+                  expect(afterEtherBalance).to.equal(
                       walletInitialEtherBalance -
                           (depositAmount2 + gasCostUser1Deposit) +
                           (withdrawalAmount - gasCostUser1Withdraw),
@@ -241,6 +271,13 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   )
 
                   expect(balanceAfterAttack).to.equal(balanceBeforeAttack)
+              })
+          })
+
+          describe("getUserBalance", async function () {
+              it("Should return a balance of 0 if the user has not interacted with the contract", async function () {
+                  userBalance = await ethWallet.getUserBalance()
+                  expect(userBalance).to.equal(0)
               })
           })
       })
