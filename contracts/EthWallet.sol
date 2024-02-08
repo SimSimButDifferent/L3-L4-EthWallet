@@ -9,6 +9,10 @@ error EthWallet__WalletIsEmpty();
 error EthWallet__WithdrawalExceedsUserBalance();
 error EthWallet_InsufficientContractBalance();
 
+/* events */
+event DepositSuccess(address depositer, uint amount);
+event WithdrawSuccess(address withdrawer, uint amount);
+
 contract EthWallet {
     /* structs */
     struct User {
@@ -84,6 +88,8 @@ contract EthWallet {
         } else {
             users[msg.sender] = User(msg.sender, depositAmount, 0, 0);
         }
+
+        emit DepositSuccess(msg.sender, depositAmount);
     }
 
     function withdraw(
@@ -101,6 +107,8 @@ contract EthWallet {
 
         // Process withdrawal
         payable(msg.sender).transfer(_withdrawalAmount);
+
+        emit WithdrawSuccess(msg.sender, _withdrawalAmount);
     }
 
     function getUserBalance() public view returns (uint) {
