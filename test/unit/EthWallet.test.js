@@ -111,10 +111,7 @@ const { developmentChains } = require("../../helper-hardhat-config")
               it("Withdrawal amount must be above zero", async function () {
                   await expect(
                       ethWallet.withdraw(hre.ethers.parseEther("0")),
-                  ).to.be.revertedWithCustomError(
-                      ethWallet,
-                      "EthWallet__WithdrawalMustBeAboveZero",
-                  )
+                  ).to.be.revertedWith("Withdrawal must be above zero!")
               })
 
               it("Does not allow withdrawals above the amount held in the contract", async function () {

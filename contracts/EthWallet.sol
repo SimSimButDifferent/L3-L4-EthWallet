@@ -94,9 +94,7 @@ contract EthWallet {
         sufficientBalance(_withdrawalAmount)
         noReeentrant
     {
-        if (_withdrawalAmount <= 0) {
-            revert EthWallet__WithdrawalMustBeAboveZero();
-        }
+        require(_withdrawalAmount > 0, "Withdrawal must be above zero!");
 
         // Update user Balance
         users[msg.sender].userBalance -= _withdrawalAmount;
