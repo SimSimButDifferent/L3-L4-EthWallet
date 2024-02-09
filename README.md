@@ -25,16 +25,26 @@ Finally, deploy to the hardhat node using:
 yarn hardhat run scripts/deploy.js --network localhost
 ```
 
+## Follow along with the course below!
+
 # Lesson 4: Error Handling and Events in Solidity
-Objective: Understand how to handle errors and emit events in Solidity, which are critical for smart contract reliability and interaction with the front end.
-Part 1: Error Handling in Solidity
-Error Handling Mechanisms:
-require: Used to check for conditions and revert the transaction if the condition is not met. It reverts all changes made to the state.
-revert: Provides a way to trigger an exception and revert the transaction, often with a custom error message.
-assert: Used for internal checks as a way to prevent conditions that should never be possible. It consumes all gas when failed.
-When to Use Each:
+**Objective:** Understand how to handle errors and emit events in Solidity, which are critical for smart contract reliability and interaction with the front end.
+
+## Part 1: Error Handling in Solidity
+**Error Handling Mechanisms:**
+
+**require:** Used to check for conditions and revert the transaction if the condition is not met. It reverts all changes made to the state.
+
+**revert:** Provides a way to trigger an exception and revert the transaction, often with a custom error message.
+
+**assert:** Used for internal checks as a way to prevent conditions that should never be possible. It consumes all gas when failed.
+
+**When to Use Each:**
+
 Use require for input validation or to enforce proper conditions before execution.
+
 Use revert for more complex condition checks, especially where a specific error message is helpful.
+
 Use assert for invariants and to check for conditions that indicate a bug.
 
 ### Example: Error Handling
@@ -57,11 +67,16 @@ contract ErrorHandling { mapping(address => uint) public balance;
 ```
 
 ## Part 2: Events in Solidity
-Understanding Events:
+**Understanding Events:**
+
 Events allow logging to the Ethereum blockchain.
+
 Useful for tracking contract activity and interacting with the contract's front-end.
-Declaring and Emitting Events:
+
+**Declaring and Emitting Events:**
+
 How to declare an event and emit it in functions.
+
 Example: Using Events
 
 ```solidity
