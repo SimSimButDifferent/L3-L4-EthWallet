@@ -7,7 +7,7 @@ For lesson 4 Code, switch to L4 branch 🌿
 To play around with this code locally run the following commands in your local terminal in order:
 
 ```
-git clone https://github.com/SimSimButDifferent/L3-EthWallet.git
+git clone https://github.com/SimSimButDifferent/L3-L4-EthWallet.git
 yarn
 ```
 
