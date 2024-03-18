@@ -2,6 +2,8 @@ require("@nomicfoundation/hardhat-toolbox")
 require("@nomicfoundation/hardhat-ethers")
 require("ethers")
 require("hardhat-deploy")
+require("@matterlabs/hardhat-zksync-deploy")
+require("@matterlabs/hardhat-zksync-solc")
 require("dotenv").config()
 
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL
@@ -11,27 +13,43 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
+    zksolc: {
+        version: "latest",
+        settings: {},
+    },
+
     defaultNetwork: "hardhat",
+
     networks: {
         hardhat: {
+            zksync: false,
             chainId: 31337,
             blockConfirmations: 1,
         },
         localhost: {
+            zksync: false,
             chainId: 31337,
         },
         sepolia: {
+            zksync: false,
             url: SEPOLIA_RPC_URL,
             accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
             chainId: 11155111,
             blockConfirmations: 6,
         },
+        zkSyncTestnet: {
+            zksync: true,
+            url: "https://sepolia.era.zksync.dev",
+            ethNetwork: SEPOLIA_RPC_URL,
+        },
     },
+
     etherscan: {
         apiKey: {
             sepolia: ETHERSCAN_API_KEY,
         },
     },
+
     solidity: {
         compilers: [
             {
@@ -39,6 +57,7 @@ module.exports = {
             },
         ],
     },
+
     namedAccounts: {
         deployer: {
             default: 0,
