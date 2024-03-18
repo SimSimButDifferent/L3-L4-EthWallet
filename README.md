@@ -2,6 +2,8 @@
 
 For lesson 3 Code, switch to main branch 🌿
 
+For Origional lesson 4 Code, switch to L4 branch
+
 ## ZkSync Deployment
 
 -   This branch is for updating the existing project to deploy on ZkSync testnet and Mainnet
