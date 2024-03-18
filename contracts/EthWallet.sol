@@ -108,7 +108,8 @@ contract EthWallet {
         users[msg.sender].userBalance -= withdrawalAmount;
 
         // Process withdrawal
-        payable(msg.sender).transfer(withdrawalAmount);
+        (bool success, ) = payable(msg.sender).call{value: withdrawalAmount}("");
+        require(success, "Transfer failed.");
 
         emit WithdrawSuccess(msg.sender, withdrawalAmount);
     }

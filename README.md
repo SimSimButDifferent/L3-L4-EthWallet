@@ -6,6 +6,16 @@ For lesson 3 Code, switch to main branch 🌿
 
 -   This branch is for updating the existing project to deploy on ZkSync testnet and Mainnet
 
+```bash
+Running deploy script
+EthWallet was deployed to 0x0729ABD1CD5d7BfE08F2d8Ce87c4C2cDD5FC7656
+Verifying the contract on ZkSync explorer...
+Your verification ID is: 8298
+Contract successfully verified on zkSync block explorer!
+Verification id: 8298
+Done in 17.66s.
+```
+
 ## Lesson 4 updates:
 
 -   added events to the deposit and withdraw functions.

@@ -4,6 +4,7 @@ require("ethers")
 require("hardhat-deploy")
 require("@matterlabs/hardhat-zksync-deploy")
 require("@matterlabs/hardhat-zksync-solc")
+require("@matterlabs/hardhat-zksync-verify")
 require("dotenv").config()
 
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL
@@ -41,6 +42,8 @@ module.exports = {
             zksync: true,
             url: "https://sepolia.era.zksync.dev",
             ethNetwork: SEPOLIA_RPC_URL,
+            verifyURL:
+                "https://explorer.sepolia.era.zksync.dev/contract_verification",
         },
     },
 
