@@ -3,20 +3,28 @@ const ethers = require("ethers")
 const { HardhatRuntimeEnvironment } = require("hardhat/types")
 const { Deployer } = require("@matterlabs/hardhat-zksync-deploy")
 const dotenv = require("dotenv")
+const { network } = require("hardhat")
 
 // An example of a deploy script that will deploy and call a simple contract.
 module.exports = async function (hre) {
     dotenv.config()
 
     const privateKey = process.env.PRIVATE_KEY
+    const privateKey2 = process.env.PRIVATE_KEY_2
     if (!privateKey) {
         throw new Error("PRIVATE_KEY is not set")
     }
 
     console.log(`Running deploy script`)
 
+    let wallet
+
     // Initialize the wallet.
-    const wallet = new Wallet(privateKey)
+    if (network.name === "zkSync") {
+        wallet = new Wallet(privateKey2)
+    } else if (network.name === "zkSyncTestnet") {
+        wallet = new Wallet(privateKey)
+    }
 
     // Create deployer object and load the artifact of the contract we want to deploy.
     const deployer = new Deployer(hre, wallet)
