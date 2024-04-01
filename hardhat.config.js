@@ -8,6 +8,8 @@ const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY
+const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2
+const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -26,12 +28,51 @@ module.exports = {
             chainId: 11155111,
             blockConfirmations: 6,
         },
+        // BASE network
+        "base-mainnet": {
+            url: "https://mainnet.base.org",
+            accounts: [PRIVATE_KEY_2],
+            chainId: 8453,
+            gasPrice: 1000000000,
+        },
+        "base-sepolia": {
+            url: "https://sepolia.base.org",
+            accounts: [PRIVATE_KEY_2],
+            chainId: 84532,
+            gasPrice: 1000000000,
+        },
+        "base-local": {
+            url: "http://localhost:8545",
+            accounts: [PRIVATE_KEY],
+            gasPrice: 1000000000,
+        },
     },
     etherscan: {
         apiKey: {
             sepolia: ETHERSCAN_API_KEY,
+            "base-sepolia": BASESCAN_API_KEY,
+            "base-mainnet": BASESCAN_API_KEY,
         },
+        customChains: [
+            {
+                network: "base-sepolia",
+                chainId: 84532,
+                urls: {
+                    apiURL: "https://api-sepolia.basescan.org/api",
+                    browserURL: "https://sepolia.basescan.org",
+                },
+            },
+            {
+                network: "base-mainnet",
+                chainId: 8453,
+                urls: {
+                    apiURL: "https://api.basescan.org/api",
+                    browserURL: "https://basescan.org",
+                },
+            },
+        ],
     },
+
     solidity: {
         compilers: [
             {
