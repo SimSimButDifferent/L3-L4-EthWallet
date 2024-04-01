@@ -21,7 +21,7 @@ Sepolia testnet - [0xA5cAC1cC06D664A2E778C0192BAb6D2ebf989719](https://sepolia.b
 To play around with this code locally run the following commands in your local terminal in order:
 
 ```
-git clone https://github.com/SimSimButDifferent/L3-EthWallet.git
+git clone https://github.com/SimSimButDifferent/L3-L4-EthWallet.git
 yarn
 ```
 
